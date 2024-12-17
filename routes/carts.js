@@ -1,5 +1,5 @@
-const express = require('express');
-const { readFile, writeFile } = require('../utils/fileManager');
+import express from 'express';
+import { readFile, writeFile } from '../utils/fileManager.js';  
 const router = express.Router();
 
 const CARTS_FILE = 'carrito.json';
@@ -59,4 +59,4 @@ router.post('/:cid/product/:pid', (req, res) => {
     res.status(201).json(cart);
 });
 
-module.exports = router;
+export default router;

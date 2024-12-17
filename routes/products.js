@@ -1,5 +1,6 @@
-const express = require('express');
-const { readFile, writeFile } = require('../utils/fileManager');
+import express from 'express';
+import { readFile, writeFile } from '../utils/fileManager.js';
+
 const router = express.Router();
 
 const PRODUCTS_FILE = 'productos.json';
@@ -62,8 +63,7 @@ router.put('/:pid', (req, res) => {
         return res.status(404).json({ error: 'Producto no encontrado' });
     }
 
-    const { id, ...updatedFields } = req.body;
-
+    const { id, ...updatedFields } = req.body; 
     products[productIndex] = {
         ...products[productIndex],
         ...updatedFields,
@@ -88,4 +88,4 @@ router.delete('/:pid', (req, res) => {
     res.status(204).send();
 });
 
-module.exports = router;
+export default router;
