@@ -1,28 +1,25 @@
-const Product = require('../models/product.model');
+import Product from '../models/product.js';
 
-class ProductManager {
-  async getAll(query = {}, options = {}) {
-    return await Product.find(query)
-      .limit(options.limit || 10)
-      .skip((options.page - 1) * options.limit)
-      .sort(options.sort);
-  }
+export const getProducts = async ({ limit = 10, page = 1, sort = 'asc', query = '' }) => {
+  const filters = query ? { category: query } : {};  
+  const sortOrder = sort === 'asc' ? 1 : -1;
 
-  async getById(id) {
-    return await Product.findById(id);
-  }
+  const products = await Product.find(filters)
+    .sort({ price: sortOrder })
+    .limit(Number(limit))  
+    .skip((Number(page) - 1) * Number(limit));  
+  const total = await Product.countDocuments(filters);
 
-  async create(productData) {
-    return await Product.create(productData);
-  }
+  return {
+    products,
+    totalPages: Math.ceil(total / limit),
+    page: Number(page),
+    hasPrevPage: Number(page) > 1,
+    hasNextPage: Number(page) < Math.ceil(total / limit),
+  };
+};
 
-  async update(id, productData) {
-    return await Product.findByIdAndUpdate(id, productData, { new: true });
-  }
-
-  async delete(id) {
-    return await Product.findByIdAndDelete(id);
-  }
-}
-
-module.exports = new ProductManager();
+export const getProductById = async (productId) => {
+  const product = await Product.findById(productId);
+  return product;
+};

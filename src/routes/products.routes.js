@@ -1,27 +1,36 @@
-const express = require('express');
+import express from 'express';
+import { getProducts, getProductById } from '../managers/productManager.js';
+
 const router = express.Router();
-const ProductManager = require('../dao/managers/productManager');
 
-router.get('/', async (req, res) => {
-  const { limit = 10, page = 1, sort, query } = req.query;
-  const options = { 
-    limit: parseInt(limit), 
-    page: parseInt(page), 
-    sort: sort ? { price: sort === 'asc' ? 1 : -1 } : {} 
-  };
+router.get('/products', async (req, res) => {
+  const { page = 1, limit = 10, sort = 'asc', query = '' } = req.query;
 
-  const products = await ProductManager.getAll(query ? { category: query } : {}, options);
-  res.json({ status: 'success', payload: products });
+  const result = await getProducts({ limit, page, sort, query });
+
+  res.json({
+    status: 'success',
+    payload: result.products,
+    totalPages: result.totalPages,
+    prevPage: result.page - 1,
+    nextPage: result.page + 1,
+    page: result.page,
+    hasPrevPage: result.hasPrevPage,
+    hasNextPage: result.hasNextPage,
+    prevLink: result.hasPrevPage ? `/products?page=${result.page - 1}&limit=${limit}&sort=${sort}&query=${query}` : null,
+    nextLink: result.hasNextPage ? `/products?page=${result.page + 1}&limit=${limit}&sort=${sort}&query=${query}` : null,
+  });
 });
 
-router.get('/:id', async (req, res) => {
-  const product = await ProductManager.getById(req.params.id);
-  res.json(product);
+router.get('/products/:pid', async (req, res) => {
+  const productId = req.params.pid;
+  const product = await getProductById(productId);
+
+  if (product) {
+    res.render('productDetail', { product });
+  } else {
+    res.status(404).json({ status: 'error', message: 'Product not found' });
+  }
 });
 
-router.post('/', async (req, res) => {
-  const product = await ProductManager.create(req.body);
-  res.json(product);
-});
-
-module.exports = router;
+export default router;
