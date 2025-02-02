@@ -1,5 +1,5 @@
 import express from 'express';
-import { addProductToCart, removeProductFromCart, updateProductQuantityInCart, removeAllProductsFromCart } from '../managers/cartManager.js';
+import { addProductToCart, removeProductFromCart, updateProductQuantityInCart, removeAllProductsFromCart } from '../dao/managers/cartManager.js';
 
 const router = express.Router();
 
@@ -50,4 +50,5 @@ router.delete('/carts/:cid', async (req, res) => {
 });
 
 export default router;
+
 

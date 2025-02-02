@@ -1,5 +1,5 @@
-import Cart from '../models/cart.js';
-import Product from '../models/product.js';
+import Cart from '../models/cart.model.js';
+import Product from '../models/product.model.js';
 
 export const addProductToCart = async (cartId, productId, quantity) => {
   const cart = await Cart.findById(cartId);
@@ -52,4 +52,3 @@ export const removeAllProductsFromCart = async (cartId) => {
 
   return cart;
 };
-
